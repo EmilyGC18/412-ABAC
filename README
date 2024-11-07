@@ -1,0 +1,7 @@
+How to install the repo to your VSCode
+open your cmd or powershell (idk for mac)
+step 1: git init
+step 2: git remote add origin <your github url for repo>.git
+step 3: pull any current changes by: git pull or git pull origin <branch-name> 
+
+
