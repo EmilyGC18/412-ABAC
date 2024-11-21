@@ -1,0 +1,14 @@
+{
+  "eeStu2": {
+    "position": "student",
+    "department": "ee",
+    "crsTaken": ["ee601"],
+    "crsTaught": ["ee101", "ee602"]
+  },
+  "eeStu1": {
+    "position": "student",
+    "department": "ee",
+    "crsTaken": ["ee601"],
+    "crsTaught": ["ee101", "ee602"]
+  }
+}
