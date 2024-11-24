@@ -1,0 +1,27 @@
+
+userAttrib(oncNurse1, position=nurse, ward=oncWard)
+userAttrib(oncNurse2, position=nurse, ward=oncWard)
+
+userAttrib(carNurse1, position=nurse, ward=carWard)
+userAttrib(carNurse2, position=nurse, ward=carWard)
+
+userAttrib(oncDoc1, position=doctor, specialties={oncology}, teams={oncTeam1 oncTeam2})
+userAttrib(oncDoc2, position=doctor, specialties={oncology}, teams={oncTeam1})
+userAttrib(oncDoc3, position=doctor, specialties={oncology}, teams={oncTeam2})
+userAttrib(oncDoc4, position=doctor, specialties={oncology}, teams={oncTeam2})
+
+userAttrib(carDoc1, position=doctor, specialties={cardiology}, teams={carTeam1})
+userAttrib(carDoc2, position=doctor, specialties={cardiology}, teams={carTeam2})
+
+userAttrib(anesDoc1, position=doctor, specialties={anesthesiology}, teams={oncTeam1 carTeam1})
+
+resourceAttrib(oncPat1oncItem, type=HRitem, author=oncDoc1, patient=oncPat1, topics={oncology}, treatingTeam=oncTeam1, ward=oncWard)
+resourceAttrib(oncPat1nursingItem, type=HRitem, author=oncNurse2, patient=oncPat1, topics={nursing}, treatingTeam=oncTeam1, ward=oncWard)
+resourceAttrib(oncPat1noteItem, type=HRitem, author=oncPat1, patient=oncPat1, topics={note}, treatingTeam=oncTeam1, ward=oncWard)
+resourceAttrib(oncPat1HR, type=HR, patient=oncPat1, treatingTeam=oncTeam1, ward=oncWard)
+
+# resources for oncPat2
+resourceAttrib(oncPat2oncItem, type=HRitem, author=doc1, patient=oncPat2, topics={oncology}, treatingTeam=oncTeam2, ward=oncWard)
+resourceAttrib(oncPat2nursingItem, type=HRitem, author=oncNurse1, patient=oncPat2, topics={nursing}, treatingTeam=oncTeam2, ward=oncWard)
+resourceAttrib(oncPat2noteItem, type=HRitem, author=oncAgent1, patient=oncPat2, topics={note}, treatingTeam=oncTeam2, ward=oncWard)
+resourceAttrib(oncPat2HR, type=HR, patient=oncPat2, treatingTeam=oncTeam2, ward=oncWard)
