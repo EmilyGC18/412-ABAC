@@ -36,15 +36,55 @@ def setupAttr(subjects, resources, rules, abac_filename):
                         resources[attributes[0]][key] = value
 
             elif(line.startswith("rule")):
-                # if line starts with rule, load into rules dict
-                # emily do stuff here !
-                print(line)
+                 # parse rules (rule(subCond; resCond; acts; cons))
+                 
+                rule_body = line[5:-1]  # removing 'rule(' and ')'
+
+                # spliting the rule into its components (subCond, resCond, acts, cons)
+                subCond, resCond, acts, cons = rule_body.split("; ")
+
+                # parse actions into a set
+                actions = set(acts[1:-1].split(" "))  # removing the curly braces and split values
+
+                # parse subject and resource conditions directly here.
+                sub_conditions = {}
+                if subCond.strip():
+                    for cond in subCond.split(", "):
+                        if "[" in cond:  
+                            attr, values = cond.split(" [ ")
+                            sub_conditions[attr] = set(values[1:-1].split(" "))  # set
+                        elif "]" in cond:  
+                            attr, value = cond.split(" ] ")
+                            sub_conditions[attr] = value  # storing the single value
+
+                res_conditions = {}
+                if resCond.strip():
+                    for cond in resCond.split(", "):
+                        if "[" in cond:  
+                            attr, values = cond.split(" [ ")
+                            res_conditions[attr] = set(values[1:-1].split(" "))  
+                        elif "]" in cond:  
+                            attr, value = cond.split(" ] ")
+                            res_conditions[attr] = value 
+
+                # storing the parsed rule as a dictionary and add it to the rules list.
+                rule = {
+                    "subCond": sub_conditions,  # subjects
+                    "resCond": res_conditions,  # resources
+                    "actions": actions,         # allowed actions
+                    "constraints": cons         # rule
+                }
+                rules.append(rule)  # adding the rule to the list of rules
+                
     # the below lines are for printing the dictionary, helps get an idea of the structure
     for subj, info in subjects.items():
         print(f"{subj}: {info}\n")
 
     for res, info in resources.items():
         print(f"{res}: {info}\n")
+    
+    for rule in rules:
+        print(f"{rule}\n")
 
 
 def verifyReqs():
@@ -80,4 +120,22 @@ def main():
         barGraph()
     
 if __name__ == "__main__":
-    main()
+    subjects = {}  # dictionary to store parsed user attributes
+    resources = {}  # dictionary to store parsed resource attributes
+    rules = []  # list to store parsed rules
+
+    abac_file = "university.abac" 
+
+    setupAttr(subjects, resources, rules, abac_file)
+
+    print("\nFinal Subjects Dictionary:")
+    for subj, attributes in subjects.items():
+        print(f"{subj}: {attributes}")
+
+    print("\nFinal Resources Dictionary:")
+    for res, attributes in resources.items():
+        print(f"{res}: {attributes}")
+
+    print("\nFinal Rules List:")
+    for rule in rules:
+        print(rule)
