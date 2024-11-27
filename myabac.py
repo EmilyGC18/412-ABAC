@@ -120,4 +120,22 @@ def main():
         barGraph()
     
 if __name__ == "__main__":
-    main()
+    subjects = {}  # dictionary to store parsed user attributes
+    resources = {}  # dictionary to store parsed resource attributes
+    rules = []  # list to store parsed rules
+
+    abac_file = "university.abac" 
+
+    setupAttr(subjects, resources, rules, abac_file)
+
+    print("\nFinal Subjects Dictionary:")
+    for subj, attributes in subjects.items():
+        print(f"{subj}: {attributes}")
+
+    print("\nFinal Resources Dictionary:")
+    for res, attributes in resources.items():
+        print(f"{res}: {attributes}")
+
+    print("\nFinal Rules List:")
+    for rule in rules:
+        print(rule)
