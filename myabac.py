@@ -1,4 +1,7 @@
 import sys
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def setupAttr(subjects, resources, rules, abac_filename):
     with open(abac_filename, 'r') as f:
@@ -162,9 +165,77 @@ def verifyReqs(subjects, resources, rules, requests):
             print(f"{line.replace("\n","")} - {permission}\n") ## print request result once rule found OR out of rules to check
     return -1
 
-def heatmap():
-    # goos
+def heatmap(subjects,resources,rules):
+    attributesArray = []
+    attributesSArray = []
+    attributesRArray = []
+    # goes through all attributes in the subject attributes
+    for currentSub in subjects:
+        for value in subjects[currentSub]:
+            if value not in attributesSArray:
+                attributesSArray.append(value)
+    # goes through all attributes in the resource attributes
+    for currentRes in resources:
+        for value in resources[currentRes]:
+            if value not in attributesRArray:
+                attributesRArray.append(value)
+    #puts all the attributes together regardless if there is dupes
+    attributesArray=attributesRArray+attributesSArray
+
+    #sets size and names of x/y axis of heatmap
+    num_rules = len(rules)  
+    num_attributes = len(attributesArray)  
+    rules1 = [f"Rule {i+1}" for i in range(num_rules)]  
+    attributes=[f"{i}" for i in attributesArray]
+    permissions = np.zeros((num_rules, num_attributes), dtype=int) 
+    #this finds the permissions to the specific rule and attr
+    for currentAtr in attributesArray:
+        for currentRul in rules:
+            for currentSec in currentRul:
+                if currentAtr in currentRul[currentSec]:
+                    if currentSec in ['constraints']:#for situation of constraints made problems before
+                        permissions[list(rules).index(currentRul), list(attributesArray).index(currentAtr)] = len(currentRul['actions'])
+                        
+                    else:#checks everything else
+                        yNum = list(currentRul).index(currentSec)-1
+                        if(yNum==-1):
+                            yNum=list(attributesArray).index(currentAtr)
+                        permissions[list(rules).index(currentRul), yNum] = len(currentRul['actions'])
+    check3 = ""
+    seen = set()
+    for num in attributesArray:#checks for dupes in attributes
+        if num in seen:
+            check3 = num
+        seen.add(num)
+    if bool(check3):#if there is dupes make them equal the same in the heatmap
+        indices = [i for i, attr in enumerate(attributes) if attr == check3]
+        values = permissions[:, list(attributesArray).index(check3)]
+        for postion in indices:
+            permissions[:, postion] = values
+        
+    create_permissions_heatmap(rules1, attributes, permissions)
+        
     return -1
+def create_permissions_heatmap(rules, attributes, permissions, bins=(10, 15)):#overall heatmap making 
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(
+        permissions,  # Permission values as the heatmap data
+        cmap="viridis",  
+        cbar_kws={'label': 'Permissions'}, 
+        xticklabels=attributes,  # x-axis labels (attributes)
+        yticklabels=rules,  # y-axis labels (rules)
+        annot=True,  
+        fmt="d",  
+    )
+
+    # Axis labels and title
+    plt.title(f"Permissions Heatmap")
+    plt.xlabel("Attributes")
+    plt.ylabel("Rules")
+    plt.xticks(rotation=45)
+    plt.yticks(rotation=0)
+    plt.gca().invert_yaxis()
+    plt.show()
 
 def barGraph():
     # goos pt2
@@ -185,7 +256,7 @@ def main():
         # request_filename = sys.argv[3]
     elif(opt == "-a"):
         setupAttr(subjects, resources, rules, abac_filename)
-        heatmap()
+        heatmap(subjects,resources,rules)
     elif(opt == "-b"):
         setupAttr(subjects, resources, rules, abac_filename)
         barGraph()
