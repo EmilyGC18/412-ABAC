@@ -169,6 +169,9 @@ def heatmap(subjects,resources,rules):
     attributesArray = []
     attributesSArray = []
     attributesRArray = []
+    attributesArray1 = []
+    attributesSArray1 = []
+    attributesRArray1 = []
     # goes through all attributes in the subject attributes
     for currentSub in subjects:
         for value in subjects[currentSub]:
@@ -181,12 +184,25 @@ def heatmap(subjects,resources,rules):
                 attributesRArray.append(value)
     #puts all the attributes together regardless if there is dupes
     attributesArray=attributesRArray+attributesSArray
-
+    #for the names on the graph
+    # goes through all attributes in the subject attributes
+    for currentSub in subjects:
+        for value in subjects[currentSub]:
+            if "S_"+value not in attributesSArray1:
+                attributesSArray1.append("S_"+value)
+    # goes through all attributes in the resource attributes
+    for currentRes in resources:
+        for value in resources[currentRes]:
+            if "R_"+value not in attributesRArray1:
+                attributesRArray1.append("R_"+value)
+    #puts all the attributes together regardless if there is dupes
+    attributesArray1=attributesRArray1+attributesSArray1
     #sets size and names of x/y axis of heatmap
     num_rules = len(rules)  
     num_attributes = len(attributesArray)  
     rules1 = [f"Rule {i+1}" for i in range(num_rules)]  
     attributes=[f"{i}" for i in attributesArray]
+    attributes1=[f"{i}" for i in attributesArray1]#sets the names on the hmap
     permissions = np.zeros((num_rules, num_attributes), dtype=int) 
     #this finds the permissions to the specific rule and attr
     for currentAtr in attributesArray:
@@ -213,10 +229,10 @@ def heatmap(subjects,resources,rules):
         for postion in indices:
             permissions[:, postion] = values
         
-    create_permissions_heatmap(rules1, attributes, permissions)
+    create_heatmap(rules1, attributes1, permissions)
         
     return -1
-def create_permissions_heatmap(rules, attributes, permissions, bins=(10, 15)):#overall heatmap making 
+def create_heatmap(rules, attributes, permissions, bins=(10, 15)):#overall heatmap making 
     plt.figure(figsize=(10, 8))
     sns.heatmap(
         permissions,  # Permission values as the heatmap data
@@ -237,9 +253,102 @@ def create_permissions_heatmap(rules, attributes, permissions, bins=(10, 15)):#o
     plt.gca().invert_yaxis()
     plt.show()
 
-def barGraph():
-    # goos pt2
+def barGraph(subjects,resources,rules):
+    attributesArray = []
+    attributesSArray = []
+    attributesRArray = []
+    attributesArray1 = []
+    attributesSArray1 = []
+    attributesRArray1 = []
+    values=[]
+    #this is specifically for the names in the graph
+    # goes through all attributes in the subject attributes
+    for currentSub in subjects:
+        for value in subjects[currentSub]:
+            if "S_"+value not in attributesSArray:
+                attributesSArray.append("S_"+value)
+    # goes through all attributes in the resource attributes
+    for currentRes in resources:
+        for value in resources[currentRes]:
+            if "R_"+value not in attributesRArray:
+                attributesRArray.append("R_"+value)
+    #puts all the attributes together regardless if there is dupes
+    attributesArray=attributesRArray+attributesSArray
+    # goes through all attributes in the subject attributes
+    for currentSub in subjects:
+        for value in subjects[currentSub]:
+            if value not in attributesSArray1:
+                attributesSArray1.append(value)
+    # goes through all attributes in the resource attributes
+    for currentRes in resources:
+        for value in resources[currentRes]:
+            if value not in attributesRArray1:
+                attributesRArray1.append(value)
+    #puts all the attributes together regardless if there is dupes
+    attributesArray1=attributesRArray1+attributesSArray1
+    num = 0
+    for currentAtr in attributesArray1:
+        for currentRul in rules:
+            for currentSec in currentRul:
+                if currentAtr in currentRul[currentSec]:
+                    num = num+1
+        values.append(num)
+        num = 0
+
+   # Generate random resource values for the subjects
+    
+    # Call the function
+    create_bar(attributesArray, values)
+
     return -1
+
+def create_bar(subjects, resources):
+   
+    # Sort data for top 10 most resources
+    sorted_data_most = sorted(zip(resources, subjects), reverse=True, key=lambda x: x[0])
+    top_resources, top_subjects = zip(*sorted_data_most[:10])
+
+    # Sort data for top 10 least resources
+    sorted_data_least = sorted(zip(resources, subjects), key=lambda x: x[0])
+    least_resources, least_subjects = zip(*sorted_data_least[:10])
+
+    # Create subplots
+    fig, axes = plt.subplots(1, 2, figsize=(16, 6), sharey=True)
+
+    # Plot Top 10 Most Resources
+    axes[0].bar(top_subjects, top_resources, color='skyblue', alpha=0.8)
+    axes[0].set_title("Top 10 Most Subjects", fontsize=14)
+    axes[0].set_xlabel("Subjects", fontsize=12)
+    axes[0].set_ylabel("Resources", fontsize=12)
+    axes[0].tick_params(axis='x', rotation=45, labelsize=10)
+
+    # Add value annotations
+    for bar, resource in zip(axes[0].containers[0], top_resources):
+        axes[0].text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.5,
+            str(resource),
+            ha='center', va='bottom', fontsize=9
+        )
+
+    # Plot Top 10 Least Resources
+    axes[1].bar(least_subjects, least_resources, color='lightcoral', alpha=0.8)
+    axes[1].set_title("Top 10 Least Subjects", fontsize=14)
+    axes[1].set_xlabel("Subjects", fontsize=12)
+    axes[1].tick_params(axis='x', rotation=45, labelsize=10)
+
+    # Add value annotations
+    for bar, resource in zip(axes[1].containers[0], least_resources):
+        axes[1].text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.5,
+            str(resource),
+            ha='center', va='bottom', fontsize=9
+        )
+
+    # Adjust layout
+    plt.tight_layout()
+    plt.show()
 
 def main():
     opt = sys.argv[1]
@@ -259,7 +368,7 @@ def main():
         heatmap(subjects,resources,rules)
     elif(opt == "-b"):
         setupAttr(subjects, resources, rules, abac_filename)
-        barGraph()
+        barGraph(subjects,resources,rules)
 
 main()
 
