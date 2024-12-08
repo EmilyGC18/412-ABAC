@@ -317,9 +317,9 @@ def create_bar(subjects, resources):
 
     # Plot Top 10 Most Resources
     axes[0].bar(top_subjects, top_resources, color='skyblue', alpha=0.8)
-    axes[0].set_title("Top 10 Most Subjects", fontsize=14)
-    axes[0].set_xlabel("Subjects", fontsize=12)
-    axes[0].set_ylabel("Resources", fontsize=12)
+    axes[0].set_title("Top 10 Atrributes", fontsize=14)
+    axes[0].set_xlabel("Attributes", fontsize=12)
+    axes[0].set_ylabel("Rules", fontsize=12)
     axes[0].tick_params(axis='x', rotation=45, labelsize=10)
 
     # Add value annotations
@@ -333,8 +333,8 @@ def create_bar(subjects, resources):
 
     # Plot Top 10 Least Resources
     axes[1].bar(least_subjects, least_resources, color='lightcoral', alpha=0.8)
-    axes[1].set_title("Top 10 Least Subjects", fontsize=14)
-    axes[1].set_xlabel("Subjects", fontsize=12)
+    axes[1].set_title("Least 10 Atrributes", fontsize=14)
+    axes[1].set_xlabel("Attributes", fontsize=12)
     axes[1].tick_params(axis='x', rotation=45, labelsize=10)
 
     # Add value annotations
