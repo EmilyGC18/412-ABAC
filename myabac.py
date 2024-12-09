@@ -126,7 +126,6 @@ def checkTargetCon(condition, target):
         param = ""
         for p in set(condition).intersection(set(target)): ## finds what attribute the rule is looking for in the subject
             param = p
-            print(target[param])    
             if(param == ""): ## if not intersection, no matching attribute
                 return False ## exit loop
             if(target[param] not in condition[param]): ## if target does not possess the rule's desired attribute
